@@ -1,0 +1,60 @@
+{% extends 'flatpages/default.html' %}
+{% load custom_filters %}!
+{% block title %}
+News
+{% endblock title %}
+
+{% block content %}
+   <h1>Все статьи</h1>
+   <form action="" method="get">
+       {{ filterset.form.as_p }}
+       <input type="submit" value="Найти" />
+   </form>
+
+<hr>
+
+    {% if perms.news.add_news %}
+    <a href="{% url 'news_create' %}">Добавить новость</a>
+    {% endif %}
+
+   <h3>{{ news|length }}</h3>
+
+   <hr>
+   {% if news %}
+       <table>
+           <tr>
+               <td>Заголовок</td>
+               <td>Дата публикации</td>
+               <td>Текст</td>
+
+                {% if perms.news.change_news or perms.news.delete_news %}
+                <td>Действия</td>
+                {% endif %}
+
+
+
+        {% for news1 in news %}
+           <tr>
+               <td>{{ news1.title|censor }}</td>
+               <td>{{ news1.dateCreation|date:'d M Y' }}</td>
+               <td>{{ news1.text|truncatewords:20|censor }}</td>
+          <td>
+                    {% if perms.news.change_news %}
+                    <a href="{% url 'news_update' pk=news.id %}">Изменить</a>
+                    {% endif %}
+                    {% if perms.news.delete_post %}
+                    <a href="{% url 'news_delete' news.id %}">Удалить</a>
+                    {% endif %}
+                </td>
+
+            </tr>
+            {% endfor %}
+
+       </table>
+   {% else %}
+       <h2>Статей нет!</h2>
+   {% endif %}
+
+
+
+{% endblock content %}
